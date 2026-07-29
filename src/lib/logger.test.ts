@@ -12,6 +12,7 @@ describe("logger", () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
+    delete (global as unknown as { window?: unknown }).window;
   });
 
   it("logs info messages as structured JSON at the default level", async () => {
@@ -43,5 +44,32 @@ describe("logger", () => {
 
     expect(console.warn).not.toHaveBeenCalled();
     expect(console.error).toHaveBeenCalledTimes(1);
+  });
+
+  it("falls back to info for an unrecognized LOG_LEVEL", async () => {
+    process.env.LOG_LEVEL = "verbose";
+    const { logger } = await import("./logger");
+    logger.debug("should not appear");
+    logger.info("should appear");
+
+    expect(console.debug).not.toHaveBeenCalled();
+    expect(console.info).toHaveBeenCalledTimes(1);
+  });
+
+  it("tags log lines with the browser context when window is defined", async () => {
+    (global as unknown as { window: unknown }).window = {};
+    const { logger } = await import("./logger");
+    logger.info("hi");
+
+    const payload = JSON.parse((console.info as jest.Mock).mock.calls[0][0]);
+    expect(payload.context).toBe("browser");
+  });
+
+  it("tags log lines with the server context when window is undefined", async () => {
+    const { logger } = await import("./logger");
+    logger.info("hi");
+
+    const payload = JSON.parse((console.info as jest.Mock).mock.calls[0][0]);
+    expect(payload.context).toBe("server");
   });
 });
