@@ -1,7 +1,0 @@
-Hello, World! 🥗
-
-This is the web frontend for Project New Apron — the place where meal
-plans, recipes, and grocery lists will come together on screen.
-
-Nothing rendered yet, just this friendly little text file saying:
-the table is being set. Grab a seat, the UI is on its way.
