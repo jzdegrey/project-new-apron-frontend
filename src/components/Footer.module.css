@@ -1,0 +1,25 @@
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+  padding: 24px 48px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border);
+}
+
+.links {
+  display: flex;
+  gap: 20px;
+}
+
+@media (max-width: 600px) {
+  .footer {
+    padding: 20px 24px;
+    justify-content: center;
+    text-align: center;
+  }
+}
