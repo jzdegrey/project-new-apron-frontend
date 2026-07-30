@@ -31,12 +31,16 @@ docker compose up
 ## Project structure
 
 - `src/app` — Next.js App Router pages/layouts
-  - `page.tsx` — combined sign-in / create-account screen
+  - `page.tsx` — public marketing front page (navbar, hero, footer)
+  - `sign-in/page.tsx` — combined sign-in / create-account screen
   - `welcome/page.tsx` — post-sign-in confirmation screen (server component;
-    redirects to `/` if there's no valid session)
+    redirects to `/sign-in` if there's no valid session)
+  - `authLayout.module.css` — shared centered-card layout used by the
+    sign-in and welcome pages
   - `api/auth/*` — route handlers that proxy to the backend and set the
     session cookie (see Authentication below)
-- `src/components` — shared React components (`AuthForm`, `PasswordField`, `Toast`)
+- `src/components` — shared React components (`Navbar`, `Footer`, `AuthForm`,
+  `PasswordField`, `Toast`)
 - `src/lib/validation.ts` — client-side field validation mirroring the
   backend's rules, used for live form feedback
 - `src/lib/backendClient.ts` — typed fetch wrapper for the backend auth API
@@ -50,14 +54,16 @@ docker compose up
 
 ## Authentication
 
-Sign-in and account creation share one screen (`/`) that toggles between the
-two modes. Form submission goes through this app's own `/api/auth/*` route
-handlers rather than calling the backend directly from the browser: they
-forward the request to the backend, then set the returned JWT as an
-`httpOnly`, `sameSite=lax` cookie so the token is never exposed to
+Sign-in and account creation share one screen (`/sign-in`) that toggles
+between the two modes. Form submission goes through this app's own
+`/api/auth/*` route handlers rather than calling the backend directly from
+the browser: they forward the request to the backend, then set the returned
+JWT as an `httpOnly`, `sameSite=lax` cookie so the token is never exposed to
 client-side JavaScript (mitigating XSS-based token theft). `/welcome` is a
 server component that reads that cookie, verifies it against the backend,
-and redirects back to `/` if it's missing or invalid.
+and redirects back to `/sign-in` if it's missing or invalid. The public
+front page (`/`) links to `/sign-in` from its navbar and its main
+call-to-action.
 
 ## Configuration
 
