@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { backendGetCurrentUser } from "@/lib/backendClient";
 import { SESSION_COOKIE_NAME } from "@/lib/session";
-import styles from "../page.module.css";
+import styles from "../authLayout.module.css";
 
 export default async function WelcomePage() {
   const cookieStore = await cookies();
@@ -10,7 +10,7 @@ export default async function WelcomePage() {
   const user = token ? await backendGetCurrentUser(token) : null;
 
   if (!user) {
-    redirect("/");
+    redirect("/sign-in");
   }
 
   return (
