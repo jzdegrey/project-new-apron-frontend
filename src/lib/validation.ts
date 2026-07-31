@@ -86,3 +86,74 @@ export function validatePhoneNumber(value: string): string | null {
   }
   return null;
 }
+
+/**
+ * Recipe field rules mirror the backend's `app/schemas/recipe.py`.
+ */
+
+export const RECIPE_NAME_MAX_LENGTH = 60;
+export const RECIPE_TEXT_MAX_LENGTH = 4098;
+export const INGREDIENT_NAME_MAX_LENGTH = 30;
+export const INGREDIENT_QUANTITY_MAX = 99;
+export const DIRECTION_STEP_MAX_LENGTH = 255;
+export const MAX_RECIPE_IMAGE_BYTES = 2 * 1024 * 1024;
+export const ACCEPTED_RECIPE_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+
+export function validateRecipeName(value: string): string | null {
+  const trimmed = value.trim();
+  if (trimmed.length < 1 || trimmed.length > RECIPE_NAME_MAX_LENGTH) {
+    return `Recipe name must be 1-${RECIPE_NAME_MAX_LENGTH} characters.`;
+  }
+  return null;
+}
+
+function validateOptionalRecipeText(value: string): string | null {
+  if (value.trim().length > RECIPE_TEXT_MAX_LENGTH) {
+    return `Must be no more than ${RECIPE_TEXT_MAX_LENGTH} characters.`;
+  }
+  return null;
+}
+
+export function validateRecipeDescription(value: string): string | null {
+  return validateOptionalRecipeText(value);
+}
+
+export function validateRecipeNotes(value: string): string | null {
+  return validateOptionalRecipeText(value);
+}
+
+export function validateIngredientQuantity(quantity: number | null): string | null {
+  if (quantity === null || Number.isNaN(quantity)) {
+    return "Enter a quantity, like 1 or 1/2.";
+  }
+  if (quantity <= 0 || quantity > INGREDIENT_QUANTITY_MAX) {
+    return `Quantity must be greater than 0 and no more than ${INGREDIENT_QUANTITY_MAX}.`;
+  }
+  return null;
+}
+
+export function validateIngredientName(value: string): string | null {
+  const trimmed = value.trim();
+  if (trimmed.length < 1 || trimmed.length > INGREDIENT_NAME_MAX_LENGTH) {
+    return `Ingredient name must be 1-${INGREDIENT_NAME_MAX_LENGTH} characters.`;
+  }
+  return null;
+}
+
+export function validateDirectionStep(value: string): string | null {
+  const trimmed = value.trim();
+  if (trimmed.length < 1 || trimmed.length > DIRECTION_STEP_MAX_LENGTH) {
+    return `Each step must be 1-${DIRECTION_STEP_MAX_LENGTH} characters.`;
+  }
+  return null;
+}
+
+export function validateRecipeImageFile(file: File): string | null {
+  if (!ACCEPTED_RECIPE_IMAGE_TYPES.includes(file.type)) {
+    return "Photo must be a JPEG, PNG, GIF, or WEBP image.";
+  }
+  if (file.size > MAX_RECIPE_IMAGE_BYTES) {
+    return "Photo must be no larger than 2MB.";
+  }
+  return null;
+}

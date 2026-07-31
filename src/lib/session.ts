@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import type { NextResponse } from "next/server";
 import { globals } from "@/config/globals";
 
@@ -18,4 +19,10 @@ export function setSessionCookie(response: NextResponse, accessToken: string): v
 
 export function clearSessionCookie(response: NextResponse): void {
   response.cookies.delete(SESSION_COOKIE_NAME);
+}
+
+/** Reads the session token from the request's cookies (Server Components / Route Handlers only). */
+export async function getSessionToken(): Promise<string | undefined> {
+  const cookieStore = await cookies();
+  return cookieStore.get(SESSION_COOKIE_NAME)?.value;
 }

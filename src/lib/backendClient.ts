@@ -1,4 +1,10 @@
 import { globals } from "@/config/globals";
+import type {
+  Recipe,
+  RecipeListPage,
+  RecipeSortOrder,
+  RecipeWriteInput,
+} from "@/lib/recipes";
 
 export class BackendApiError extends Error {
   status: number;
@@ -112,5 +118,112 @@ export async function backendGetCurrentUser(token: string): Promise<BackendUser 
     return null;
   }
 
+  return response.json();
+}
+
+function authHeaders(token: string): HeadersInit {
+  return { Authorization: `Bearer ${token}` };
+}
+
+export async function backendListRecipes(
+  token: string,
+  params: { sort: RecipeSortOrder; offset: number; limit: number }
+): Promise<RecipeListPage> {
+  const query = new URLSearchParams({
+    sort: params.sort,
+    offset: String(params.offset),
+    limit: String(params.limit),
+  });
+  const response = await fetch(`${globals.apiBaseUrl}/api/v1/recipes?${query}`, {
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+  if (!response.ok) {
+    throw await parseErrorResponse(response);
+  }
+  return response.json();
+}
+
+export async function backendCreateRecipe(
+  token: string,
+  recipe: RecipeWriteInput
+): Promise<Recipe> {
+  const response = await fetch(`${globals.apiBaseUrl}/api/v1/recipes`, {
+    method: "POST",
+    headers: { ...authHeaders(token), "Content-Type": "application/json" },
+    body: JSON.stringify(recipe),
+  });
+  if (!response.ok) {
+    throw await parseErrorResponse(response);
+  }
+  return response.json();
+}
+
+export async function backendGetRecipe(token: string, id: number): Promise<Recipe | null> {
+  const response = await fetch(`${globals.apiBaseUrl}/api/v1/recipes/${id}`, {
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+  if (response.status === 404) {
+    return null;
+  }
+  if (!response.ok) {
+    throw await parseErrorResponse(response);
+  }
+  return response.json();
+}
+
+export async function backendUpdateRecipe(
+  token: string,
+  id: number,
+  recipe: RecipeWriteInput
+): Promise<Recipe> {
+  const response = await fetch(`${globals.apiBaseUrl}/api/v1/recipes/${id}`, {
+    method: "PUT",
+    headers: { ...authHeaders(token), "Content-Type": "application/json" },
+    body: JSON.stringify(recipe),
+  });
+  if (!response.ok) {
+    throw await parseErrorResponse(response);
+  }
+  return response.json();
+}
+
+export async function backendDeleteRecipe(token: string, id: number): Promise<void> {
+  const response = await fetch(`${globals.apiBaseUrl}/api/v1/recipes/${id}`, {
+    method: "DELETE",
+    headers: authHeaders(token),
+  });
+  if (!response.ok) {
+    throw await parseErrorResponse(response);
+  }
+}
+
+export async function backendUploadRecipeImage(
+  token: string,
+  id: number,
+  file: Blob
+): Promise<Recipe> {
+  const formData = new FormData();
+  formData.append("file", file);
+  const response = await fetch(`${globals.apiBaseUrl}/api/v1/recipes/${id}/image`, {
+    method: "POST",
+    headers: authHeaders(token),
+    body: formData,
+  });
+  if (!response.ok) {
+    throw await parseErrorResponse(response);
+  }
+  return response.json();
+}
+
+export async function backendDeleteRecipeImage(token: string, id: number): Promise<Recipe> {
+  const response = await fetch(`${globals.apiBaseUrl}/api/v1/recipes/${id}/image`, {
+    method: "DELETE",
+    headers: authHeaders(token),
+  });
+  if (!response.ok) {
+    throw await parseErrorResponse(response);
+  }
   return response.json();
 }

@@ -54,6 +54,12 @@ export function RecipesSection({ recipes }: { recipes: Recipe[] }) {
             ))}
           </select>
           <Link
+            href="/recipes"
+            className="text-sm font-medium text-orange-600 hover:text-orange-700"
+          >
+            View all recipes
+          </Link>
+          <Link
             href="/recipes/new"
             className="rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-700"
           >
