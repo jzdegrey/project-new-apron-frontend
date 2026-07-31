@@ -129,7 +129,7 @@ export function AuthForm() {
       });
 
       if (response.ok) {
-        router.push("/welcome");
+        router.push("/dashboard");
         return;
       }
 
