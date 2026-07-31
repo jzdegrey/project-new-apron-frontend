@@ -13,7 +13,13 @@ import {
   validatePhoneNumber,
   validateUsername,
 } from "@/lib/validation";
-import styles from "./AuthForm.module.css";
+
+const fieldLabelClass = "text-sm font-semibold text-stone-700";
+const fieldInputClass =
+  "rounded-lg border border-stone-300 px-3 py-2 text-sm text-stone-900 shadow-sm outline-none transition-colors focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 aria-[invalid=true]:border-red-500";
+const errorTextClass = "m-0 text-sm text-red-600";
+const hintValidClass = "m-0 text-sm text-emerald-700";
+const hintInvalidClass = "m-0 text-sm text-stone-500";
 
 type Mode = "sign-in" | "create-account";
 type FieldErrors = Record<string, string | undefined>;
@@ -147,19 +153,24 @@ export function AuthForm() {
   }
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit} noValidate>
-      <h1>{mode === "sign-in" ? "Sign In" : "Create Account"}</h1>
+    <form className="flex w-full flex-col gap-5" onSubmit={handleSubmit} noValidate>
+      <h1 className="font-display text-2xl font-semibold text-stone-900">
+        {mode === "sign-in" ? "Sign In" : "Create Account"}
+      </h1>
 
-      <div className={styles.field}>
-        <label htmlFor="username">Username</label>
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="username" className={fieldLabelClass}>
+          Username
+        </label>
         <input
           id="username"
+          className={fieldInputClass}
           value={form.username}
           autoComplete="username"
           onChange={(event) => updateField("username", event.target.value)}
           aria-invalid={!!errors.username}
         />
-        {errors.username && <p className={styles.errorText}>{errors.username}</p>}
+        {errors.username && <p className={errorTextClass}>{errors.username}</p>}
       </div>
 
       <PasswordField
@@ -170,7 +181,7 @@ export function AuthForm() {
         autoComplete={mode === "create-account" ? "new-password" : "current-password"}
         helperText={
           mode === "create-account" && form.password ? (
-            <p className={validatePassword(form.password) ? styles.hintInvalid : styles.hintValid}>
+            <p className={validatePassword(form.password) ? hintInvalidClass : hintValidClass}>
               {validatePassword(form.password) ?? "Password meets the length requirement."}
             </p>
           ) : undefined
@@ -190,8 +201,8 @@ export function AuthForm() {
                 <p
                   className={
                     validateConfirmPassword(form.password, form.confirm_password)
-                      ? styles.hintInvalid
-                      : styles.hintValid
+                      ? hintInvalidClass
+                      : hintValidClass
                   }
                 >
                   {validateConfirmPassword(form.password, form.confirm_password) ??
@@ -201,92 +212,121 @@ export function AuthForm() {
             }
           />
 
-          <div className={styles.field}>
-            <label htmlFor="first_name">First Name</label>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="first_name" className={fieldLabelClass}>
+              First Name
+            </label>
             <input
               id="first_name"
+              className={fieldInputClass}
               value={form.first_name}
               autoComplete="given-name"
               onChange={(event) => updateField("first_name", event.target.value)}
               aria-invalid={!!errors.first_name}
             />
-            {errors.first_name && <p className={styles.errorText}>{errors.first_name}</p>}
+            {errors.first_name && <p className={errorTextClass}>{errors.first_name}</p>}
           </div>
 
-          <div className={styles.field}>
-            <label htmlFor="last_name">Last Name</label>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="last_name" className={fieldLabelClass}>
+              Last Name
+            </label>
             <input
               id="last_name"
+              className={fieldInputClass}
               value={form.last_name}
               autoComplete="family-name"
               onChange={(event) => updateField("last_name", event.target.value)}
               aria-invalid={!!errors.last_name}
             />
-            {errors.last_name && <p className={styles.errorText}>{errors.last_name}</p>}
+            {errors.last_name && <p className={errorTextClass}>{errors.last_name}</p>}
           </div>
 
-          <div className={styles.field}>
-            <label htmlFor="date_of_birth">Date of Birth</label>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="date_of_birth" className={fieldLabelClass}>
+              Date of Birth
+            </label>
             <input
               id="date_of_birth"
               type="date"
+              className={fieldInputClass}
               value={form.date_of_birth}
               autoComplete="bday"
               onChange={(event) => updateField("date_of_birth", event.target.value)}
               aria-invalid={!!errors.date_of_birth}
             />
-            {errors.date_of_birth && <p className={styles.errorText}>{errors.date_of_birth}</p>}
+            {errors.date_of_birth && <p className={errorTextClass}>{errors.date_of_birth}</p>}
           </div>
 
-          <div className={styles.field}>
-            <label htmlFor="email">Email (optional)</label>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="email" className={fieldLabelClass}>
+              Email (optional)
+            </label>
             <input
               id="email"
               type="email"
+              className={fieldInputClass}
               value={form.email}
               autoComplete="email"
               onChange={(event) => updateField("email", event.target.value)}
               aria-invalid={!!errors.email}
             />
-            {errors.email && <p className={styles.errorText}>{errors.email}</p>}
+            {errors.email && <p className={errorTextClass}>{errors.email}</p>}
           </div>
 
-          <div className={styles.field}>
-            <label htmlFor="phone_number">Phone Number (optional)</label>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="phone_number" className={fieldLabelClass}>
+              Phone Number (optional)
+            </label>
             <input
               id="phone_number"
               type="tel"
+              className={fieldInputClass}
               value={form.phone_number}
               autoComplete="tel"
               onChange={(event) => updateField("phone_number", event.target.value)}
               aria-invalid={!!errors.phone_number}
             />
-            {errors.phone_number && <p className={styles.errorText}>{errors.phone_number}</p>}
+            {errors.phone_number && <p className={errorTextClass}>{errors.phone_number}</p>}
           </div>
 
-          <div className={styles.checkboxField}>
-            <label>
+          <div className="flex flex-col gap-1.5 text-sm">
+            <label className="flex items-start gap-2 text-stone-700">
               <input
                 type="checkbox"
+                className="mt-0.5 h-4 w-4 rounded border-stone-300 text-orange-600 focus:ring-orange-500/40"
                 checked={form.agreed_to_terms}
                 onChange={(event) => updateField("agreed_to_terms", event.target.checked)}
               />
-              I agree to the{" "}
-              <a href="#" target="_blank" rel="noreferrer">
-                Terms of Service
-              </a>{" "}
-              and{" "}
-              <a href="#" target="_blank" rel="noreferrer">
-                Privacy Policy
-              </a>
+              <span>
+                I agree to the{" "}
+                <a
+                  href="#"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-medium text-orange-600 hover:text-orange-700"
+                >
+                  Terms of Service
+                </a>{" "}
+                and{" "}
+                <a
+                  href="#"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-medium text-orange-600 hover:text-orange-700"
+                >
+                  Privacy Policy
+                </a>
+              </span>
             </label>
-            {errors.agreed_to_terms && <p className={styles.errorText}>{errors.agreed_to_terms}</p>}
+            {errors.agreed_to_terms && <p className={errorTextClass}>{errors.agreed_to_terms}</p>}
           </div>
 
-          <div className={styles.checkboxField}>
-            <label>
+          <div className="flex flex-col gap-1.5 text-sm">
+            <label className="flex items-center gap-2 text-stone-700">
               <input
                 type="checkbox"
+                className="h-4 w-4 rounded border-stone-300 text-orange-600 focus:ring-orange-500/40"
                 checked={form.email_subscription_opt_in}
                 onChange={(event) => updateField("email_subscription_opt_in", event.target.checked)}
               />
@@ -297,18 +337,22 @@ export function AuthForm() {
       )}
 
       {formError && (
-        <p className={styles.errorText} role="alert">
+        <p className={errorTextClass} role="alert">
           {formError}
         </p>
       )}
 
-      <button type="submit" disabled={submitting}>
+      <button
+        type="submit"
+        disabled={submitting}
+        className="rounded-lg bg-orange-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-60"
+      >
         {mode === "sign-in" ? "Sign In" : "Create Account"}
       </button>
 
       <button
         type="button"
-        className={styles.switchModeButton}
+        className="text-sm font-medium text-orange-600 hover:text-orange-700"
         onClick={() => switchMode(mode === "sign-in" ? "create-account" : "sign-in")}
       >
         {mode === "sign-in" ? "Create Account" : "Sign In"}

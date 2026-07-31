@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import styles from "./Toast.module.css";
 
 interface ToastMessage {
   id: number;
@@ -43,9 +42,17 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <div className={styles.toastContainer} role="region" aria-live="polite">
+      <div
+        className="fixed bottom-6 right-6 z-50 flex flex-col gap-2"
+        role="region"
+        aria-live="polite"
+      >
         {toasts.map((toast) => (
-          <div key={toast.id} className={styles.toast} role="alert">
+          <div
+            key={toast.id}
+            className="max-w-sm rounded-lg bg-stone-900 px-4 py-3 text-sm text-white shadow-lg"
+            role="alert"
+          >
             {toast.text}
           </div>
         ))}
