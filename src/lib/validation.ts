@@ -157,3 +157,45 @@ export function validateRecipeImageFile(file: File): string | null {
   }
   return null;
 }
+
+/**
+ * Meal plan field rules mirror the backend's `app/schemas/meal_plan.py`.
+ */
+
+export const MEAL_PLAN_NAME_MAX_LENGTH = 120;
+export const MEAL_PLAN_TEXT_MAX_LENGTH = 4098;
+export const MEAL_PLAN_MIN_DAYS = 1;
+export const MEAL_PLAN_MAX_DAYS = 30;
+
+export function validateMealPlanName(value: string): string | null {
+  if (value.trim().length > MEAL_PLAN_NAME_MAX_LENGTH) {
+    return `Meal plan name must be no more than ${MEAL_PLAN_NAME_MAX_LENGTH} characters.`;
+  }
+  return null;
+}
+
+export function validateMealPlanDescription(value: string): string | null {
+  if (value.trim().length > MEAL_PLAN_TEXT_MAX_LENGTH) {
+    return `Must be no more than ${MEAL_PLAN_TEXT_MAX_LENGTH} characters.`;
+  }
+  return null;
+}
+
+export function validateMealPlanDateRange(startDate: string, endDate: string): string | null {
+  if (!startDate || !endDate) {
+    return "Start and end date are required.";
+  }
+  if (endDate < startDate) {
+    return "End date must be on or after the start date.";
+  }
+  const start = new Date(`${startDate}T00:00:00`);
+  const end = new Date(`${endDate}T00:00:00`);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return "Enter valid dates.";
+  }
+  const days = Math.round((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+  if (days < MEAL_PLAN_MIN_DAYS || days > MEAL_PLAN_MAX_DAYS) {
+    return `Meal plan range must be between ${MEAL_PLAN_MIN_DAYS} and ${MEAL_PLAN_MAX_DAYS} days.`;
+  }
+  return null;
+}
