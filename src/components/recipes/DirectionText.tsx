@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatQuantity } from "@/lib/fraction";
 import { matchIngredientSegments } from "@/lib/ingredientMatch";
 import { INGREDIENT_UNIT_LABELS, type IngredientUnit } from "@/lib/units";
@@ -16,10 +16,37 @@ interface DirectionTextProps {
   ingredients: IngredientDetail[];
 }
 
+const HOVER_POINTER_QUERY = "(hover: hover) and (pointer: fine)";
+
+/** True when the viewer has a mouse-like pointer (desktop), false on
+ * touch-only devices. Server-rendered as false (no `window`); the lazy
+ * initializer re-evaluates on the client during hydration so there's no
+ * extra render/flicker once mounted. */
+function useHasHoverPointer(): boolean {
+  const [hasHoverPointer, setHasHoverPointer] = useState(() =>
+    typeof window === "undefined" ? false : window.matchMedia(HOVER_POINTER_QUERY).matches
+  );
+
+  useEffect(() => {
+    const query = window.matchMedia(HOVER_POINTER_QUERY);
+    function handleChange(event: MediaQueryListEvent) {
+      setHasHoverPointer(event.matches);
+    }
+    query.addEventListener("change", handleChange);
+    return () => query.removeEventListener("change", handleChange);
+  }, []);
+
+  return hasHoverPointer;
+}
+
 /** Renders a direction step's text, highlighting recognized ingredient names.
- * Tapping/clicking a highlighted ingredient shows its quantity + unit. */
+ * On desktop with a mouse, hovering (or focusing) a highlighted ingredient
+ * shows its quantity + unit, and the popup persists only while hovered.
+ * On touch devices, tapping toggles the popup instead, since there's no
+ * hover state to key off of. */
 export function DirectionText({ text, ingredients }: DirectionTextProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const hasHoverPointer = useHasHoverPointer();
   const segments = matchIngredientSegments(
     text,
     ingredients.map((ingredient) => ingredient.name)
@@ -34,11 +61,24 @@ export function DirectionText({ text, ingredients }: DirectionTextProps) {
         const ingredient = ingredients[segment.ingredientIndex];
         const isActive = activeIndex === segment.ingredientIndex;
         return (
-          <span key={index} className="relative inline-block">
+          <span
+            key={index}
+            className="relative inline-block"
+            onMouseEnter={
+              hasHoverPointer ? () => setActiveIndex(segment.ingredientIndex) : undefined
+            }
+            onMouseLeave={hasHoverPointer ? () => setActiveIndex(null) : undefined}
+          >
             <button
               type="button"
               className="rounded bg-orange-100 px-0.5 font-medium text-orange-800 underline decoration-orange-400 decoration-dotted underline-offset-2"
-              onClick={() => setActiveIndex(isActive ? null : segment.ingredientIndex)}
+              onClick={
+                hasHoverPointer
+                  ? undefined
+                  : () => setActiveIndex(isActive ? null : segment.ingredientIndex)
+              }
+              onFocus={hasHoverPointer ? () => setActiveIndex(segment.ingredientIndex) : undefined}
+              onBlur={hasHoverPointer ? () => setActiveIndex(null) : undefined}
               aria-expanded={isActive}
             >
               {segment.text}

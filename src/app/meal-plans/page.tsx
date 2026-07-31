@@ -18,7 +18,7 @@ export default async function MealPlansPage() {
 
   return (
     <div className="flex min-h-screen flex-1 flex-col bg-stone-50">
-      <Navbar />
+      <Navbar isSignedIn />
       <main className="flex flex-1 flex-col">
         <MealPlanPortal initialItems={page.items} initialHasMore={page.has_more} />
       </main>

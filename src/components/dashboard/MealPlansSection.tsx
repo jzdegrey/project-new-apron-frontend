@@ -1,28 +1,37 @@
 import Link from "next/link";
-import type { MealPlan } from "@/lib/dashboardData";
+import { MealPlanCard } from "@/components/mealPlans/MealPlanCard";
+import { bucketForMealPlan, localDateString, type MealPlanListItem } from "@/lib/mealPlans";
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
   month: "short",
   day: "numeric",
   year: "numeric",
+  timeZone: "UTC",
 });
 
 function formatDateRange(startDate: string, endDate: string): string {
-  return `${dateFormatter.format(new Date(startDate))} – ${dateFormatter.format(new Date(endDate))}`;
+  return `${dateFormatter.format(new Date(`${startDate}T00:00:00Z`))} – ${dateFormatter.format(
+    new Date(`${endDate}T00:00:00Z`)
+  )}`;
 }
 
-export function MealPlansSection({ mealPlans }: { mealPlans: MealPlan[] }) {
-  const active = mealPlans.find((plan) => plan.status === "active");
+export function MealPlansSection({ mealPlans }: { mealPlans: MealPlanListItem[] }) {
+  const today = localDateString();
+  const current = mealPlans.filter((plan) => bucketForMealPlan(plan, today) === "current");
+  const active = current[0] ?? null;
   const others = [
-    ...mealPlans.filter((plan) => plan.status === "upcoming"),
-    ...mealPlans.filter((plan) => plan.status === "past"),
+    ...current.slice(1),
+    ...mealPlans.filter((plan) => bucketForMealPlan(plan, today) === "upcoming"),
+    ...mealPlans.filter((plan) => bucketForMealPlan(plan, today) === "past"),
   ];
 
   return (
     <section aria-labelledby="meal-plans-heading" className="mx-auto w-full max-w-6xl px-6 py-10">
       <div className="flex items-center justify-between gap-4">
         <h2 id="meal-plans-heading" className="font-display text-2xl font-semibold text-stone-900">
-          Meal Plans
+          <Link href="/meal-plans" className="transition-colors hover:text-orange-700">
+            Meal Plans
+          </Link>
         </h2>
         <div className="flex items-center gap-3">
           <Link
@@ -50,7 +59,7 @@ export function MealPlansSection({ mealPlans }: { mealPlans: MealPlan[] }) {
           </span>
           <h3 className="mt-2 font-display text-xl font-semibold text-stone-900">{active.name}</h3>
           <p className="mt-1 text-sm text-stone-600">
-            {formatDateRange(active.startDate, active.endDate)}
+            {formatDateRange(active.start_date, active.end_date)}
           </p>
         </Link>
       ) : (
@@ -65,18 +74,7 @@ export function MealPlansSection({ mealPlans }: { mealPlans: MealPlan[] }) {
         <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {others.map((plan) => (
             <li key={plan.id}>
-              <Link
-                href={`/meal-plans/${plan.id}`}
-                className="block rounded-xl border border-stone-200 bg-white p-4 shadow-sm transition-colors hover:border-orange-300"
-              >
-                <span className="text-xs font-semibold uppercase tracking-wide text-stone-500">
-                  {plan.status === "upcoming" ? "Upcoming" : "Past"}
-                </span>
-                <h4 className="mt-1 font-medium text-stone-900">{plan.name}</h4>
-                <p className="mt-1 text-sm text-stone-600">
-                  {formatDateRange(plan.startDate, plan.endDate)}
-                </p>
-              </Link>
+              <MealPlanCard mealPlan={plan} />
             </li>
           ))}
         </ul>

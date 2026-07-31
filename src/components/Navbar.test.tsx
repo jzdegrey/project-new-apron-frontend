@@ -32,4 +32,26 @@ describe("Navbar", () => {
       screen.queryByRole("link", { name: "Sign In / Create Account" })
     ).not.toBeInTheDocument();
   });
+
+  it("points Home at the dashboard and shows portal links when signed in", () => {
+    render(
+      <ToastProvider>
+        <Navbar isSignedIn />
+      </ToastProvider>
+    );
+
+    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("href", "/dashboard");
+    expect(screen.getByRole("link", { name: "Meal Plans" })).toHaveAttribute(
+      "href",
+      "/meal-plans"
+    );
+    expect(screen.getByRole("link", { name: "Recipes" })).toHaveAttribute("href", "/recipes");
+  });
+
+  it("does not show portal links when signed out", () => {
+    render(<Navbar />);
+
+    expect(screen.queryByRole("link", { name: "Meal Plans" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Recipes" })).not.toBeInTheDocument();
+  });
 });

@@ -7,16 +7,28 @@ interface NavbarProps {
 }
 
 export function Navbar({ isSignedIn = false }: NavbarProps) {
+  const homeHref = isSignedIn ? "/dashboard" : "/";
+
   return (
     <nav className="sticky top-0 z-40 border-b border-stone-200/80 bg-stone-50/90 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
-        <Link href="/" className="transition-opacity hover:opacity-80">
+        <Link href={homeHref} className="transition-opacity hover:opacity-80">
           <Logo />
         </Link>
         <div className="flex items-center gap-6 text-sm font-medium text-stone-600">
-          <Link href="/" className="transition-colors hover:text-stone-900">
+          <Link href={homeHref} className="transition-colors hover:text-stone-900">
             Home
           </Link>
+          {isSignedIn && (
+            <>
+              <Link href="/meal-plans" className="transition-colors hover:text-stone-900">
+                Meal Plans
+              </Link>
+              <Link href="/recipes" className="transition-colors hover:text-stone-900">
+                Recipes
+              </Link>
+            </>
+          )}
           {isSignedIn ? (
             <SignOutButton />
           ) : (
