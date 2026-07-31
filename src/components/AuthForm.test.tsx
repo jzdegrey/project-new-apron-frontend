@@ -44,7 +44,7 @@ describe("AuthForm - sign in mode", () => {
     expect(global.fetch).not.toHaveBeenCalled();
   });
 
-  it("submits credentials and redirects to /welcome on success", async () => {
+  it("submits credentials and redirects to /dashboard on success", async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
       json: async () => ({ ok: true }),
@@ -56,7 +56,7 @@ describe("AuthForm - sign in mode", () => {
     await user.type(screen.getByLabelText("Password"), "sup3rSecret!");
     await user.click(screen.getByRole("button", { name: "Sign In" }));
 
-    await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/welcome"));
+    await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/dashboard"));
     expect(global.fetch).toHaveBeenCalledWith(
       "/api/auth/login",
       expect.objectContaining({ method: "POST" })
