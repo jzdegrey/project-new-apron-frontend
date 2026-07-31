@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { createPortal } from "react-dom";
 import type { Recipe } from "@/lib/recipes";
 import { RecipeForm } from "@/components/recipes/RecipeForm";
 
@@ -30,7 +31,11 @@ export function CreateRecipeModal({ open, onCreated, onClose }: CreateRecipeModa
     return null;
   }
 
-  return (
+  // Portaled to document.body: this dialog contains RecipeForm's own <form>,
+  // and callers (e.g. RecipeAttachPicker inside MealForm) can render this
+  // from within another <form> — nesting <form> elements is invalid HTML and
+  // breaks hydration, so it must live outside the ancestor form's DOM subtree.
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-stone-900/50 p-4 py-10">
       <div
         role="dialog"
@@ -55,6 +60,7 @@ export function CreateRecipeModal({ open, onCreated, onClose }: CreateRecipeModa
           <RecipeForm mode="create" onSuccess={onCreated} onCancelOverride={onClose} />
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

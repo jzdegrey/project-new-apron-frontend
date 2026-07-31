@@ -2,28 +2,33 @@
 
 import { render, screen } from "@testing-library/react";
 import { MealPlansSection } from "./MealPlansSection";
-import type { MealPlan } from "@/lib/dashboardData";
+import { addDaysToDateString, localDateString, type MealPlanListItem } from "@/lib/mealPlans";
 
-const ACTIVE: MealPlan = {
-  id: "1",
+const today = localDateString();
+
+const ACTIVE: MealPlanListItem = {
+  id: 1,
   name: "This Week",
-  startDate: "2026-07-27",
-  endDate: "2026-08-02",
-  status: "active",
+  description: null,
+  start_date: addDaysToDateString(today, -2),
+  end_date: addDaysToDateString(today, 4),
+  meal_count: 3,
 };
-const UPCOMING: MealPlan = {
-  id: "2",
+const UPCOMING: MealPlanListItem = {
+  id: 2,
   name: "Next Week",
-  startDate: "2026-08-03",
-  endDate: "2026-08-09",
-  status: "upcoming",
+  description: null,
+  start_date: addDaysToDateString(today, 5),
+  end_date: addDaysToDateString(today, 11),
+  meal_count: 0,
 };
-const PAST: MealPlan = {
-  id: "3",
+const PAST: MealPlanListItem = {
+  id: 3,
   name: "Last Week",
-  startDate: "2026-07-20",
-  endDate: "2026-07-26",
-  status: "past",
+  description: null,
+  start_date: addDaysToDateString(today, -9),
+  end_date: addDaysToDateString(today, -3),
+  meal_count: 2,
 };
 
 describe("MealPlansSection", () => {
@@ -55,5 +60,14 @@ describe("MealPlansSection", () => {
     const items = screen.getAllByRole("listitem").map((item) => item.textContent);
     expect(items[0]).toContain("Next Week");
     expect(items[1]).toContain("Last Week");
+  });
+
+  it("links the Meal Plans heading to the meal plans portal", () => {
+    render(<MealPlansSection mealPlans={[]} />);
+
+    expect(screen.getByRole("link", { name: "Meal Plans" })).toHaveAttribute(
+      "href",
+      "/meal-plans"
+    );
   });
 });
