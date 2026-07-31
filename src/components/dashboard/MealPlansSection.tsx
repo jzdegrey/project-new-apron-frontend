@@ -24,12 +24,20 @@ export function MealPlansSection({ mealPlans }: { mealPlans: MealPlan[] }) {
         <h2 id="meal-plans-heading" className="font-display text-2xl font-semibold text-stone-900">
           Meal Plans
         </h2>
-        <Link
-          href="/meal-plans/new"
-          className="rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-700"
-        >
-          Add Meal Plan
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/meal-plans"
+            className="text-sm font-medium text-orange-600 hover:text-orange-700"
+          >
+            View all meal plans
+          </Link>
+          <Link
+            href="/meal-plans/new"
+            className="rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-700"
+          >
+            Add Meal Plan
+          </Link>
+        </div>
       </div>
 
       {active ? (

@@ -178,9 +178,20 @@ interface RecipeFormProps {
   mode: "create" | "edit";
   recipeId?: number;
   initialRecipe?: Recipe;
+  /** When provided (e.g. the "create a recipe on the fly" modal), called with
+   * the saved recipe instead of navigating to its page. */
+  onSuccess?: (recipe: Recipe) => void;
+  /** When provided, called instead of navigating back on cancel. */
+  onCancelOverride?: () => void;
 }
 
-export function RecipeForm({ mode, recipeId, initialRecipe }: RecipeFormProps) {
+export function RecipeForm({
+  mode,
+  recipeId,
+  initialRecipe,
+  onSuccess,
+  onCancelOverride,
+}: RecipeFormProps) {
   const router = useRouter();
   const { showToast } = useToast();
 
@@ -215,6 +226,8 @@ export function RecipeForm({ mode, recipeId, initialRecipe }: RecipeFormProps) {
   function handleCancel() {
     if (isDirty()) {
       setShowCancelConfirm(true);
+    } else if (onCancelOverride) {
+      onCancelOverride();
     } else {
       router.push(returnPath);
     }
@@ -321,7 +334,11 @@ export function RecipeForm({ mode, recipeId, initialRecipe }: RecipeFormProps) {
         await fetch(`/api/recipes/${savedRecipe.id}/image`, { method: "DELETE" });
       }
 
-      router.push(`/recipes/${savedRecipe.id}`);
+      if (onSuccess) {
+        onSuccess(savedRecipe);
+      } else {
+        router.push(`/recipes/${savedRecipe.id}`);
+      }
     } catch {
       showToast("Unable to reach the server. Please check your connection and try again.");
     } finally {
@@ -581,7 +598,7 @@ export function RecipeForm({ mode, recipeId, initialRecipe }: RecipeFormProps) {
         confirmLabel="Discard changes"
         cancelLabel="Keep editing"
         danger
-        onConfirm={() => router.push(returnPath)}
+        onConfirm={() => (onCancelOverride ? onCancelOverride() : router.push(returnPath))}
         onCancel={() => setShowCancelConfirm(false)}
       />
 

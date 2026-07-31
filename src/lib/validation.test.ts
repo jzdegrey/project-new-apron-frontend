@@ -5,6 +5,9 @@ import {
   validateEmail,
   validateIngredientName,
   validateIngredientQuantity,
+  validateMealPlanDateRange,
+  validateMealPlanDescription,
+  validateMealPlanName,
   validateName,
   validatePassword,
   validatePhoneNumber,
@@ -231,5 +234,52 @@ describe("validateRecipeImageFile", () => {
 
   it("accepts a file exactly at the 2MB boundary", () => {
     expect(validateRecipeImageFile(makeFile("image/png", 2 * 1024 * 1024))).toBeNull();
+  });
+});
+
+describe("validateMealPlanName", () => {
+  it("accepts a blank name (defaults are applied server-side)", () => {
+    expect(validateMealPlanName("")).toBeNull();
+  });
+
+  it("accepts a name at the 120 character boundary", () => {
+    expect(validateMealPlanName("x".repeat(120))).toBeNull();
+  });
+
+  it("rejects a name over 120 characters", () => {
+    expect(validateMealPlanName("x".repeat(121))).not.toBeNull();
+  });
+});
+
+describe("validateMealPlanDescription", () => {
+  it("accepts a blank description", () => {
+    expect(validateMealPlanDescription("")).toBeNull();
+  });
+
+  it("rejects a description over 4098 characters", () => {
+    expect(validateMealPlanDescription("x".repeat(4099))).not.toBeNull();
+  });
+});
+
+describe("validateMealPlanDateRange", () => {
+  it("accepts a single-day range", () => {
+    expect(validateMealPlanDateRange("2026-01-01", "2026-01-01")).toBeNull();
+  });
+
+  it("accepts a 30-day range", () => {
+    expect(validateMealPlanDateRange("2026-01-01", "2026-01-30")).toBeNull();
+  });
+
+  it("rejects a 31-day range", () => {
+    expect(validateMealPlanDateRange("2026-01-01", "2026-01-31")).not.toBeNull();
+  });
+
+  it("rejects an end date before the start date", () => {
+    expect(validateMealPlanDateRange("2026-01-10", "2026-01-01")).not.toBeNull();
+  });
+
+  it("rejects missing dates", () => {
+    expect(validateMealPlanDateRange("", "2026-01-01")).not.toBeNull();
+    expect(validateMealPlanDateRange("2026-01-01", "")).not.toBeNull();
   });
 });
