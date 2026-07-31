@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { backendGetCurrentUser } from "@/lib/backendClient";
 import { logger } from "@/lib/logger";
+import { getSessionToken } from "@/lib/session";
 
 const SELL_POINTS = [
   {
@@ -18,12 +20,15 @@ const SELL_POINTS = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
   logger.info("Landing page rendered on the server");
+
+  const token = await getSessionToken();
+  const user = token ? await backendGetCurrentUser(token) : null;
 
   return (
     <div className="flex min-h-screen flex-1 flex-col bg-stone-50">
-      <Navbar />
+      <Navbar isSignedIn={!!user} />
       <main className="flex flex-1 flex-col">
         <section className="relative overflow-hidden">
           <div
