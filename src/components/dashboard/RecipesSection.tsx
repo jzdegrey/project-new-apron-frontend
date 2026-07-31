@@ -6,7 +6,7 @@ import type { Recipe, RecipeSortOrder } from "@/lib/dashboardData";
 
 const SORT_LABELS: Record<RecipeSortOrder, string> = {
   recently_added: "Recently added",
-  recently_created: "Recently created",
+  recently_used: "Recently used",
   most_used: "Most often used",
 };
 
@@ -15,9 +15,9 @@ const DEFAULT_SORT_ORDER: RecipeSortOrder = "recently_added";
 function sortRecipes(recipes: Recipe[], order: RecipeSortOrder): Recipe[] {
   const sorted = [...recipes];
   switch (order) {
-    case "recently_created":
+    case "recently_used":
       return sorted.sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        (a, b) => new Date(b.lastUsedAt).getTime() - new Date(a.lastUsedAt).getTime()
       );
     case "most_used":
       return sorted.sort((a, b) => b.usageCount - a.usageCount);

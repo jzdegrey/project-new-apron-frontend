@@ -17,15 +17,15 @@ export interface MealPlan {
   status: MealPlanStatus;
 }
 
-export type RecipeSortOrder = "recently_added" | "recently_created" | "most_used";
+export type RecipeSortOrder = "recently_added" | "recently_used" | "most_used";
 
 export interface Recipe {
   id: string;
   title: string;
   /** When the recipe was saved to this user's collection. */
   addedAt: string;
-  /** When the recipe itself was authored. */
-  createdAt: string;
+  /** When the recipe was last added to a meal plan. */
+  lastUsedAt: string;
   /** How many times this recipe has been added to a meal plan. */
   usageCount: number;
 }
