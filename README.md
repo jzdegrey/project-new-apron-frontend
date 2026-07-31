@@ -25,6 +25,11 @@ Or via Docker Compose (make sure `.env` exists first):
 docker compose up
 ```
 
+The container installs the latest dependencies from `package.json`/
+`package-lock.json` every time it starts (before launching the dev server),
+so `docker compose up` picks up newly added packages (e.g. after a `git
+pull`) without needing `--build` or a manual `npm install` on the host.
+
 ## Scripts
 
 - `npm run dev` — start the dev server
