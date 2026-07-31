@@ -21,7 +21,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex min-h-screen flex-1 flex-col bg-stone-50">
-      <Navbar />
+      <Navbar isSignedIn />
       <main className="flex flex-1 flex-col">
         <div className="mx-auto w-full max-w-6xl px-6 pt-10">
           <h1 className="font-display text-3xl font-semibold text-stone-900">
