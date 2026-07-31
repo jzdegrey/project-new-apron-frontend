@@ -1,7 +1,13 @@
 "use client";
 
 import { useId, useState } from "react";
-import styles from "./AuthForm.module.css";
+
+const fieldLabelClass = "text-sm font-semibold text-stone-700";
+const fieldInputClass =
+  "rounded-lg border border-stone-300 px-3 py-2 text-sm text-stone-900 shadow-sm outline-none transition-colors focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 aria-[invalid=true]:border-red-500";
+const errorTextClass = "m-0 text-sm text-red-600";
+const showPasswordButtonClass =
+  "rounded-lg border border-stone-300 px-3 text-xs font-medium text-stone-600 transition-colors hover:bg-stone-50";
 
 interface PasswordFieldProps {
   label: string;
@@ -24,12 +30,15 @@ export function PasswordField({
   const inputId = useId();
 
   return (
-    <div className={styles.field}>
-      <label htmlFor={inputId}>{label}</label>
-      <div className={styles.passwordRow}>
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={inputId} className={fieldLabelClass}>
+        {label}
+      </label>
+      <div className="flex gap-2">
         <input
           id={inputId}
           type={visible ? "text" : "password"}
+          className={`flex-1 ${fieldInputClass}`}
           value={value}
           autoComplete={autoComplete}
           onChange={(event) => onChange(event.target.value)}
@@ -37,7 +46,7 @@ export function PasswordField({
         />
         <button
           type="button"
-          className={styles.showPasswordButton}
+          className={showPasswordButtonClass}
           onClick={() => setVisible((current) => !current)}
           aria-label={visible ? `Hide ${label.toLowerCase()}` : `Show ${label.toLowerCase()}`}
         >
@@ -45,7 +54,7 @@ export function PasswordField({
         </button>
       </div>
       {helperText}
-      {error && <p className={styles.errorText}>{error}</p>}
+      {error && <p className={errorTextClass}>{error}</p>}
     </div>
   );
 }

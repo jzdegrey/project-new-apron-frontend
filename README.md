@@ -1,6 +1,11 @@
 # project-new-apron-frontend
 
 Frontend code for Project New Apron — a Next.js (TypeScript, App Router) web app.
+Styling uses [Tailwind CSS v4](https://tailwindcss.com/) utility classes (no
+CSS Modules); there's no official branding yet, so the current look — warm
+orange/stone palette, `Fraunces`/`Inter` fonts, and a simple placeholder
+apron/chef-hat mark in `src/components/Logo.tsx` — is a placeholder pending
+real brand assets.
 
 ## Getting started
 
@@ -35,12 +40,10 @@ docker compose up
   - `sign-in/page.tsx` — combined sign-in / create-account screen
   - `welcome/page.tsx` — post-sign-in confirmation screen (server component;
     redirects to `/sign-in` if there's no valid session)
-  - `authLayout.module.css` — shared centered-card layout used by the
-    sign-in and welcome pages
   - `api/auth/*` — route handlers that proxy to the backend and set the
     session cookie (see Authentication below)
 - `src/components` — shared React components (`Navbar`, `Footer`, `AuthForm`,
-  `PasswordField`, `Toast`)
+  `PasswordField`, `Toast`, `Logo`)
 - `src/lib/validation.ts` — client-side field validation mirroring the
   backend's rules, used for live form feedback
 - `src/lib/backendClient.ts` — typed fetch wrapper for the backend auth API
